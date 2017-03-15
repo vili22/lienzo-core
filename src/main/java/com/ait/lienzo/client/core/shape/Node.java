@@ -682,6 +682,13 @@ public abstract class Node <T extends Node<T>> implements IDrawable<T>
     {
         return m_opts.getUserData();
     }
+    
+    public HandlerManager getHandlerManager() {
+    	
+    	return m_opts.getHandlerManager();
+    }
+    
+    
 
     /**
      * Sets whether the node is visible.
