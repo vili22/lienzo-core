@@ -18,6 +18,7 @@ package com.ait.lienzo.client.widget;
 
 import com.ait.lienzo.client.core.Context2D;
 import com.ait.lienzo.client.core.event.INodeXYEvent;
+import com.ait.lienzo.client.core.shape.Attributes;
 import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.ait.lienzo.client.core.shape.Node;
 import com.ait.lienzo.client.core.types.Point2D;
@@ -182,10 +183,11 @@ public class DragContext
         {
             m_drag.adjust(m_lclp);
         }
-        final double x = m_prmx + m_lclp.getX();
-
-        final double y = m_prmy + m_lclp.getY();
-
+        
+        Point2D localDrag = convertDragToLocalCoordinates(m_lclp); 
+        final double x = m_prmx + localDrag.getX();
+        final double y = m_prmy + localDrag.getY();
+        
         if (m_lstx != x)
         {
             m_prim.setX(m_lstx = x);
@@ -204,10 +206,11 @@ public class DragContext
      */
     public void dragDone()
     {
-        final double x = m_prmx + m_lclp.getX();
-
-        final double y = m_prmy + m_lclp.getY();
-
+    	
+    	Point2D localDrag = convertDragToLocalCoordinates(m_lclp); 
+        final double x = m_prmx + localDrag.getX();
+        final double y = m_prmy + localDrag.getY();
+        
         if (m_lstx != x)
         {
             m_prim.setX(m_lstx = x);
@@ -343,5 +346,90 @@ public class DragContext
     public DragConstraintEnforcer getDragConstraints()
     {
         return m_drag;
+    }
+    
+    public static Transform getPossibleNodeTransform(Attributes attributes) {
+
+		if (!attributes.hasAnyTransformAttributes()) {
+			return null;
+		}
+
+		final Transform xfrm = new Transform();
+
+		if (!attributes.hasComplexTransformAttributes()) {
+			xfrm.translate(attributes.getX(), attributes.getY());
+			return xfrm;
+		}
+		// Otherwise use ROTATION, SCALE, OFFSET and SHEAR
+
+		double ox = 0;
+
+		double oy = 0;
+
+		final Point2D offset = attributes.getOffset();
+
+		if (null != offset) {
+			ox = offset.getX();
+
+			oy = offset.getY();
+		}
+		final double r = attributes.getRotation();
+
+		if (r != 0) {
+			if ((ox != 0) || (oy != 0)) {
+				xfrm.translate(ox, oy);
+
+				xfrm.rotate(r);
+
+				xfrm.translate(-ox, -oy);
+			} else {
+				xfrm.rotate(r);
+			}
+		}
+		final Point2D scale = attributes.getScale();
+
+		if (null != scale) {
+			final double sx = scale.getX();
+
+			final double sy = scale.getY();
+
+			if ((sx != 1) || (sy != 1)) {
+				if ((ox != 0) || (oy != 0)) {
+					xfrm.translate(ox, oy);
+
+					xfrm.scale(sx, sy);
+
+					xfrm.translate(-ox, -oy);
+				} else {
+					xfrm.scale(sx, sy);
+				}
+			}
+		}
+		final Point2D shear = attributes.getShear();
+
+		if (null != shear) {
+			final double sx = shear.getX();
+
+			final double sy = shear.getY();
+
+			if ((sx != 0) || (sy != 0)) {
+				xfrm.shear(sx, sy);
+			}
+		}
+
+		xfrm.translate(attributes.getX(), attributes.getY());
+		return xfrm;
+	}
+    
+    public Point2D convertDragToLocalCoordinates(Point2D drag) {
+    	
+    	Point2D transFormedDrag = new Point2D(0,0);
+    	Point2D localConstantShift = new Point2D(0,0);
+    	
+    	Transform localTransform = getPossibleNodeTransform(m_prim.asNode().getAttributes());
+    	localTransform.getInverse().transform(m_lclp, transFormedDrag);
+    	localTransform.getInverse().transform(localConstantShift, localConstantShift);
+    	
+    	return new Point2D(transFormedDrag.getX() - localConstantShift.getX(), transFormedDrag.getY() - localConstantShift.getY());   	
     }
 }
