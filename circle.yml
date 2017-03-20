@@ -1,0 +1,22 @@
+machine:
+ timezone:
+  Europe/Helsinki
+ java:
+  version: oraclejdk8
+
+dependencies:
+ override: 
+  - mvn dependency:go-offline -s settings.xml
+
+test:
+ override:
+  - mvn clean compile test -s settings.xml
+ post:
+  - mkdir -p $CIRCLE_TEST_REPORTS/junit/
+  - find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
+  
+deployment:
+ staging:
+  branch: 2.0
+  commands:
+   - mvn deploy -s settings.xml -Dmaven.test.skip=true
