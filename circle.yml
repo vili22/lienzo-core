@@ -17,6 +17,5 @@ test:
   
 deployment:
  staging:
-  branch: 2.0
   commands:
    - mvn deploy -s settings.xml -Dmaven.test.skip=true
