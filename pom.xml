@@ -44,7 +44,61 @@
 			<releases><enabled>false</enabled></releases>
 			<snapshots><enabled>true</enabled></snapshots>
 		</repository>
+		
+		 <repository>
+            <id>kide-snapshots</id>
+            <name>Kide Snapshots</name>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <url>https://repository.kidegroup.com/repository/maven-snapshots/</url>
+        </repository>
+
+        <repository>
+            <id>kide-releases</id>
+            <name>Kide Releases</name>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <url>https://repository.kidegroup.com/repository/maven-releases/</url>
+        </repository>
+
+        <repository>
+            <id>central</id>
+            <name>Kide Central</name>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <url>https://repository.kidegroup.com/repository/maven-public/</url>
+        </repository>
 	</repositories>
+	
+	 <distributionManagement>
+        <repository>
+            <id>kide-releases</id>
+            <name>Kide Releases</name>
+            <url>https://repository.kidegroup.com/repository/maven-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>kide-snapshots</id>
+            <name>Kide Snapshots</name>
+            <url>https://repository.kidegroup.com/repository/maven-snapshots/</url>
+        </snapshotRepository>
+        <site>
+            <id>kide-sites</id>
+            <name>Kide Sites</name>
+            <url>dav:https://repository.kidegroup.com/repository/maven-sites/${project.artifactId}</url>
+        </site>
+    </distributionManagement>
 
 	<build>
 		<resources>
