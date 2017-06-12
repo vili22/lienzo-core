@@ -27,9 +27,10 @@ import com.google.gwt.user.client.ui.RootPanel;
 
 public abstract class ImageLoader
 {
+	private final Image image;
     public ImageLoader(final String url)
     {
-        final Image image = new Image();
+        image = new Image();
 
         final ImageElement element = ImageElement.as(image.getElement());
 
@@ -122,7 +123,7 @@ public abstract class ImageLoader
 
     public ImageLoader(final ImageResource resource)
     {
-        final Image image = new Image();
+        image = new Image();
 
         final ImageElement element = ImageElement.as(image.getElement());
 
@@ -149,6 +150,11 @@ public abstract class ImageLoader
         image.setResource(resource);
 
         RootPanel.get().add(image);
+    }
+    
+    public Image getImageHandle() {
+    	
+    	return image;
     }
 
     private final native void load(String url, String orig, JSImageCallback self)

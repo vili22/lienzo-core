@@ -34,6 +34,7 @@ import com.ait.lienzo.shared.core.types.ImageSelectionMode;
 import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.user.client.ui.RootPanel;
 
 /**
  * ImageProxy is used by {@link AbstractImageShape} to load and draw the image.
@@ -79,6 +80,8 @@ public class ImageProxy<T extends AbstractImageShape<T>> implements ImageDataFil
     private final ImageDataFilterChain m_filters     = new ImageDataFilterChain();
 
     private ImageClipBounds            m_obounds     = null;
+    
+    private ImageLoader 			   image_loader = null;
 
     /**
      * Creates an ImageProxy for the specified {@link AbstractImageShape}.
@@ -106,7 +109,7 @@ public class ImageProxy<T extends AbstractImageShape<T>> implements ImageDataFil
 
         m_dest_high = m_obounds.getDestHigh();
 
-        new ImageLoader(url)
+        image_loader = new ImageLoader(url)
         {
             @Override
             public final void onImageElementLoad(final ImageElement elem)
@@ -138,7 +141,7 @@ public class ImageProxy<T extends AbstractImageShape<T>> implements ImageDataFil
 
         m_dest_high = m_obounds.getDestHigh();
 
-        new ImageLoader(resource)
+        image_loader = new ImageLoader(resource)
         {
             @Override
             public final void onImageElementLoad(final ImageElement elem)
@@ -152,6 +155,16 @@ public class ImageProxy<T extends AbstractImageShape<T>> implements ImageDataFil
                 doneLoading(false, message);
             }
         };
+    }
+    
+    public void removeImageHandle() {
+    	
+    	if(image_loader != null) {
+    		if(image_loader.getImageHandle() != null) {
+    			
+    			RootPanel.get().remove(image_loader.getImageHandle());
+    		}
+    	}
     }
 
     private final void doInitialize(final ImageElement image)
