@@ -88,6 +88,11 @@ public abstract class AbstractImageShape<T extends AbstractImageShape<T>> extend
     {
         return getAttributes().getURL();
     }
+    
+    public void deleteImageHandle() {
+    	
+    	m_proxy.removeImageHandle();
+    }
 
     /**
      * Sets the URL of the image. For ImageResources, this should be the
